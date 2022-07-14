@@ -1,6 +1,7 @@
 import json
 import requests
 import pandas
+import time
 
 
 proxies = {
@@ -71,6 +72,8 @@ headers = {
 
 def get_data(url): #функция для отправки запроса и получения json файла
     response = requests.get(url= url, cookies=cookies, headers=headers, proxies=proxies,timeout=30)
+    time.sleep(0.5)
+
     if (response.status_code == 200):
         data = response.json()
     else:
@@ -99,7 +102,7 @@ def collect_data(data_page): #функция для отбора нужных д
         if (product_city == ' '):
             product_city = 'None'
         data_product = pandas.DataFrame([[product_id,product_name,product_promo_price,product_city,product_price,product_url]])
-        data_product.to_csv('itog.csv', mode = 'a', index=False,header=False,encoding='utf-8', sep = '|')
+        data_product.to_csv('itog.csv', mode = 'a', index=False,header=False,encoding='Windows-1251', sep = '|')
     
 
 
@@ -110,7 +113,7 @@ def collect_data(data_page): #функция для отбора нужных д
 def main():
     
     data_product = pandas.DataFrame([], columns=['id_product','name','price','city','promo_price','URL'])
-    data_product.to_csv('itog.csv', mode = 'w', index=False,encoding='utf-8')
+    data_product.to_csv('itog.csv', mode = 'w', index=False,encoding='Windows-1251', sep = '|')
     url = 'https://api.detmir.ru/v2/products?filter=categories[].alias:myagkie_igrushki;promo:false;withregion:RU-MOW&expand=meta.facet.ages.adults,meta.facet.gender.adults,webp&meta=*&limit=30&offset=0&sort=popularity:desc'
     data = get_data(url)
     count_products = data['meta']['length']
