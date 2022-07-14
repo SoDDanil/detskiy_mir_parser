@@ -1,5 +1,7 @@
 import json
 import requests
+import pandas
+
 
 proxies = {
  'https':'http://29ChNA:PPdJJQ@176.53.143.215:8000',
@@ -75,7 +77,7 @@ def get_data(url): #функция для отправки запроса и п�
         print('Bad requests')
     return data
 
-def collect_data(data_page): #функция для отбора нужных данных из json файла
+def collect_data(data_page): #функция для отбора нужных данных из json файла и сохранения их в csv файл
     products_data = data_page['items']
     for products in products_data:
         product_id = products['id']
@@ -96,13 +98,19 @@ def collect_data(data_page): #функция для отбора нужных д
                 product_city+= ' Spb '
         if (product_city == ' '):
             product_city = 'None'
-            
+        data_product = pandas.DataFrame([[product_id,product_name,product_promo_price,product_city,product_price,product_url]])
+        data_product.to_csv('itog.csv', mode = 'a', index=False,header=False,encoding='utf-8', sep = '|')
+    
 
 
-        print(product_id,product_name,product_promo_price,product_city,product_price,product_url,sep=' | ', end='\n')
+
+        
     
 
 def main():
+    
+    data_product = pandas.DataFrame([], columns=['id_product','name','price','city','promo_price','URL'])
+    data_product.to_csv('itog.csv', mode = 'w', index=False,encoding='utf-8')
     url = 'https://api.detmir.ru/v2/products?filter=categories[].alias:myagkie_igrushki;promo:false;withregion:RU-MOW&expand=meta.facet.ages.adults,meta.facet.gender.adults,webp&meta=*&limit=30&offset=0&sort=popularity:desc'
     data = get_data(url)
     count_products = data['meta']['length']
