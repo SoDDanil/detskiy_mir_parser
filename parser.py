@@ -72,8 +72,6 @@ headers = {
 
 def get_data(url): #функция для отправки запроса и получения json файла
     response = requests.get(url= url, cookies=cookies, headers=headers, proxies=proxies,timeout=30)
-    time.sleep(0.5)
-
     if (response.status_code == 200):
         data = response.json()
     else:
@@ -96,13 +94,13 @@ def collect_data(data_page): #функция для отбора нужных д
         product_city = ' '
         for city in data_city:
             if (city == 'RU-MOW'):
-                product_city = 'Moscow / '
+                product_city = 'Moscow '
             if (city == 'RU-SPE'):
                 product_city+= ' Spb '
         if (product_city == ' '):
             product_city = 'None'
-        data_product = pandas.DataFrame([[product_id,product_name,product_promo_price,product_city,product_price,product_url]])
-        data_product.to_csv('itog.csv', mode = 'a', index=False,header=False,encoding='Windows-1251', sep = '|')
+        data_product = pandas.DataFrame([[product_id,product_name,product_price,product_city,product_promo_price,product_url]])
+        data_product.to_csv('itog.csv', mode = 'a', index=False,encoding='utf-16', sep = '|')
     
 
 
@@ -113,7 +111,7 @@ def collect_data(data_page): #функция для отбора нужных д
 def main():
     
     data_product = pandas.DataFrame([], columns=['id_product','name','price','city','promo_price','URL'])
-    data_product.to_csv('itog.csv', mode = 'w', index=False,encoding='Windows-1251', sep = '|')
+    data_product.to_csv('itog.csv', mode = 'w', index=False,encoding='utf-16', sep = '|')
     url = 'https://api.detmir.ru/v2/products?filter=categories[].alias:myagkie_igrushki;promo:false;withregion:RU-MOW&expand=meta.facet.ages.adults,meta.facet.gender.adults,webp&meta=*&limit=30&offset=0&sort=popularity:desc'
     data = get_data(url)
     count_products = data['meta']['length']
@@ -125,10 +123,6 @@ def main():
         data_page = get_data(url_itog)
         collect_data(data_page)
         
-
-
-
-    
 
 if __name__=='__main__':
     main()
